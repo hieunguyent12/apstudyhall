@@ -1,31 +1,75 @@
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { MenuIcon } from "@heroicons/react/outline";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Header() {
+  const headerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    window.onscroll = () => onScrollHandler();
+
+    function onScrollHandler() {
+      const header = headerRef.current;
+      if (header) {
+        const sticky = header.offsetTop;
+
+        if (window.scrollY > sticky) {
+          header.classList.add("border-b-2");
+        } else {
+          header.classList.remove("border-b-2");
+        }
+      }
+    }
+  }, [headerRef]);
+
   return (
-    <div className="flex items-center justify-between z-99999">
-      <p className="text-xl">📚 AP Study Hall</p>
-      <DesktopMenu />
-      <MobileBurgerMenu />
+    <div
+      className="flex justify-center fixed top-0 z-50 bg-white border-slate-200"
+      ref={headerRef}
+      style={{
+        // This is needed to ensure that the header doesn't shift when scrollbar is shown
+        width: "100vw",
+      }}
+    >
+      <div
+        className="px-4 md:px-0 flex items-center justify-between py-2 mx-auto"
+        style={{ width: "672px" }}
+      >
+        <Link href="/">
+          <p className="text-xl website-title text-slate-700 cursor-pointer">
+            📚 AP Study Hall
+          </p>
+        </Link>
+        <DesktopMenu />
+        <MobileBurgerMenu />
+      </div>
     </div>
   );
 }
 
 function DesktopMenu() {
+  const menuItemClassName =
+    "p-2 cursor-pointer hover:bg-violet-500 hover:text-white rounded-md";
   return (
-    <div className="hidden md:flex">
-      <p className="px-4">AP Resources</p>
-      <p>Forum</p>
+    <div className="hidden md:flex items-center">
+      <Link href="/resources">
+        <p className={`mx-4 ${menuItemClassName}`}>AP Resources</p>
+      </Link>
+      <Link href="/forum">
+        <p className={menuItemClassName}>Forum</p>
+      </Link>
     </div>
   );
 }
 
 function MobileBurgerMenu() {
+  const router = useRouter();
   return (
     <Menu as="div" className="md:hidden">
       <div>
-        <Menu.Button className="inline-flex w-full justify-cente py-2 text-sm font-medium">
+        <Menu.Button className="inline-flex w-full justify-center py-2 text-sm font-medium">
           <MenuIcon className="h-7 w-7 text-slate-600" />
         </Menu.Button>
       </div>
@@ -46,8 +90,21 @@ function MobileBurgerMenu() {
                   className={`${
                     active ? "bg-violet-500 text-white" : "text-gray-900"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  onClick={() => router.push("/resources")}
                 >
-                  Edit
+                  AP Resources
+                </button>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  className={`${
+                    active ? "bg-violet-500 text-white" : "text-gray-900"
+                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  onClick={() => router.push("/forum")}
+                >
+                  Forum
                 </button>
               )}
             </Menu.Item>

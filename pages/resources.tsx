@@ -19,26 +19,34 @@ const Resources: NextPage = () => {
       .filter((className) =>
         className.toLowerCase().includes(searchQuery.toLowerCase())
       )
-      .map((classItem) => (
-        <Disclosure key={classItem}>
-          {({ open }) => (
-            <>
-              <Disclosure.Button className="p-3 my-2 flex items-center w-full justify-between rounded-md ring-1 ring-black ring-opacity-5">
-                {classItem}
+      .map((classItem) => {
+        // TODO: we want the tab to stick underneath the header when we scroll down
+        // if we reach a new tab, the new tab will replace the old tab
+        return (
+          <Disclosure key={classItem}>
+            {({ open }) => (
+              <>
+                <Disclosure.Button className="p-3 my-2 flex items-center w-full justify-between rounded-md ring-1 ring-black ring-opacity-5">
+                  {classItem}
 
-                <ChevronUpIcon
-                  className={`${
-                    open ? "rotate-180 transform" : ""
-                  } h-5 w-5 text-zinc-500`}
-                />
-              </Disclosure.Button>
-              <Disclosure.Panel className="text-gray-500">
-                Insert content here
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure>
-      ));
+                  <ChevronUpIcon
+                    className={`${
+                      open ? "rotate-180 transform" : ""
+                    } h-5 w-5 text-zinc-500`}
+                  />
+                </Disclosure.Button>
+                <Disclosure.Panel className="text-gray-500">
+                  {
+                    resourcesData.classResources[
+                      classItem as keyof typeof resourcesData.classResources
+                    ]?.review_videos[0]
+                  }
+                </Disclosure.Panel>
+              </>
+            )}
+          </Disclosure>
+        );
+      });
   };
 
   return (
