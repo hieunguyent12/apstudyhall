@@ -16,7 +16,6 @@ type Props = {
 };
 
 const Resources: NextPage<Props> = ({ resources }) => {
-  console.log(resources);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 

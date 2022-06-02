@@ -29,6 +29,7 @@ const Forum: NextPage = () => {
           profiles:author_id (id, name)
         `
       );
+
       setPosts(result.data as PostType[]);
     }
 

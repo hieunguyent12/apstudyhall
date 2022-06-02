@@ -30,7 +30,13 @@ function AuthContextProvider({ children }: Props) {
 
   useEffect(() => {
     async function getUserData() {
-      const user: any = await supabase.from("profiles").select();
+      const sessionUser = supabase.auth.user();
+
+      if (!sessionUser) return;
+
+      const user: any = await supabase.from("profiles").select().match({
+        id: sessionUser.id,
+      });
 
       // If this user doesn't have a name, we consider them to be a new user
       if (!user?.data[0]?.name) {

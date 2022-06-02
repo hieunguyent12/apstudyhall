@@ -43,7 +43,7 @@ export default function NewUserModal({
       id: user.id,
       name,
     };
-    const result = await supabase.from("profiles").upsert(profileObj);
+    const result = await supabase.from("profiles").insert(profileObj);
 
     if (result.error) {
       errorToast();
