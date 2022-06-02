@@ -1,19 +1,30 @@
 import { useState } from "react";
 
 import Input from "../Input";
+import { supabase } from "../../supabaseClient";
 
 type Props = {
   closeModal: () => void;
+  displayToast: (error: boolean) => void;
 };
 
-export default function FeedbackForm({ closeModal }: Props) {
+export default function FeedbackForm({ closeModal, displayToast }: Props) {
   const [title, setTitle] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submitFeedback = () => {
+  const submitFeedback = async () => {
     if (title === "" || feedback === "") return;
 
-    console.log(title, feedback);
+    setIsSubmitting(true);
+
+    const results = await supabase
+      .from("feedback")
+      .insert({ title, content: feedback });
+
+    setIsSubmitting(false);
+
+    displayToast(!!results.error);
   };
 
   return (
@@ -37,10 +48,11 @@ export default function FeedbackForm({ closeModal }: Props) {
 
       <button
         type="button"
-        className="inline-flex mt-4 justify-center rounded-md border border-transparent bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+        className="inline-flex mt-4 justify-center rounded-md border border-transparent bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-25"
         onClick={submitFeedback}
+        disabled={isSubmitting}
       >
-        Submit
+        {isSubmitting ? "Submitting feedback..." : "Submit"}
       </button>
     </div>
   );

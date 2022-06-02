@@ -1,25 +1,28 @@
+import { useRouter } from "next/router";
+
+import { PostType } from "../../types";
+
 type Props = {
-  post: {
-    id: number;
-    author: string;
-    content: string;
-  };
+  post: PostType;
 };
 
-// TODO: Post detail should be a modal
 export default function Post({ post }: Props) {
+  const router = useRouter();
+
   return (
-    <div className="relative border-slate-200 border rounded-md mb-7 p-3">
-      <p
-        className="absolute bg-white p-1 text-slate-400"
-        style={{
-          left: "15px",
-          top: "-16px",
-        }}
-      >
-        {post.author}
-      </p>
-      <p className="mt-3">{post.content}</p>
+    <div
+      className="relative border-slate-200 border rounded-md mb-3 p-3"
+      onClick={() => {
+        router.push(`/forum?postId=${post.id}`, `/post/${post.id}`);
+      }}
+    >
+      <span className="text-sm p-1 bg-slate-100 text-slate-600 rounded-md mr-2">
+        {post.profiles.name}
+      </span>
+      <span className="text-sm text-slate-500">5 days ago</span>
+      <div className="mt-2">
+        <p>{post.title}</p>
+      </div>
     </div>
   );
 }

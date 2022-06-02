@@ -1,12 +1,22 @@
-import type { NextPage } from "next";
+import type { NextPage, GetServerSideProps } from "next";
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon, SearchIcon } from "@heroicons/react/solid";
 import React, { useState, useRef } from "react";
 
 import Input from "../components/Input";
-import resourcesData from "../resources/data.json";
+import { getAllResources } from "../resourcesUtils";
 
-const Resources: NextPage = () => {
+type ResourcesType = {
+  name: string;
+  content: string;
+};
+
+type Props = {
+  resources: ResourcesType[];
+};
+
+const Resources: NextPage<Props> = ({ resources }) => {
+  console.log(resources);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -15,20 +25,19 @@ const Resources: NextPage = () => {
   };
 
   const renderClasses = () => {
-    return resourcesData.classes
-      .filter((className) =>
-        className.toLowerCase().includes(searchQuery.toLowerCase())
+    return resources
+      .filter((resource) =>
+        resource.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
-      .map((classItem) => {
+      .map((resource) => {
         // TODO: we want the tab to stick underneath the header when we scroll down
         // if we reach a new tab, the new tab will replace the old tab
         return (
-          <Disclosure key={classItem}>
+          <Disclosure key={resource.name}>
             {({ open }) => (
               <>
                 <Disclosure.Button className="p-3 my-2 flex items-center w-full justify-between rounded-md ring-1 ring-black ring-opacity-5">
-                  {classItem}
-
+                  {resource.name}
                   <ChevronUpIcon
                     className={`${
                       open ? "rotate-180 transform" : ""
@@ -36,11 +45,12 @@ const Resources: NextPage = () => {
                   />
                 </Disclosure.Button>
                 <Disclosure.Panel className="text-gray-500">
-                  {
-                    resourcesData.classResources[
-                      classItem as keyof typeof resourcesData.classResources
-                    ]?.review_videos[0]
-                  }
+                  <article
+                    className="prose"
+                    dangerouslySetInnerHTML={{
+                      __html: resource.content,
+                    }}
+                  />
                 </Disclosure.Panel>
               </>
             )}
@@ -71,6 +81,14 @@ const Resources: NextPage = () => {
       {renderClasses()}
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {
+      resources: await getAllResources(),
+    },
+  };
 };
 
 export default Resources;
