@@ -8,3 +8,4 @@ TODO:
 - Fix Login page
 - 404 page
 - delete/edit posts
+- paginate forum posts and comments IMPORTANT!!!!!
