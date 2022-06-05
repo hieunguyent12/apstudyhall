@@ -4,6 +4,7 @@ AP Study Hall is an app where students and teachers can find resources for AP cl
 
 TODO:
 
+- HTML Head (title)
 - Add loading states
 - Fix Login page
 - 404 page
